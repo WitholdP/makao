@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "./cardUtils.h"
+#include "./game.h"
 
 using namespace std;
 
@@ -45,6 +46,21 @@ public:
     {
         cout << "Remember that card has to mach either value or the color." << endl;
         cout << "If you dont have a matching card then type 99 to draw from the deck." << endl;
+    }
+
+    void NoPenaltyMessage()
+    {
+        cout << "You do not have a penalty." << endl;
+    }
+
+    void DrawXMessage(int x)
+    {
+        cout << "You have to draw " << x << " cards." << endl;
+    }
+
+    void SkipRoundMessage()
+    {
+        cout << "You Have to skip this round." << endl;
     }
 };
 

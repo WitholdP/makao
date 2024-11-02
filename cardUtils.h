@@ -129,9 +129,25 @@ public:
         return m_value;
     }
 
+    void Activate()
+    {
+        active = true;
+    }
+
+    void Deactivate()
+    {
+        active = false;
+    }
+
+    bool IsActive()
+    {
+        return active;
+    }
+
 private:
     Color m_color = Color::Heart;
     Value m_value = Value::Two;
+    bool active = false;
 };
 
 class Deck
@@ -146,7 +162,7 @@ public:
     {
         for (int i = 0; i < (int)Color::Number; ++i)
         {
-            for (int j = 0; j < 4; ++j)
+            for (int j = 0; j < (int)Value::Number; ++j)
             {
                 m_cards.push_back(Card((Color)i, (Value)j));
             }
@@ -189,6 +205,10 @@ public:
 
     void returnCardsToDeck(vector<Card> cards)
     {
+        for (Card card : cards)
+        {
+            card.active = false;
+        }
         m_cards.insert(m_cards.end(), cards.begin(), cards.end());
     }
 
