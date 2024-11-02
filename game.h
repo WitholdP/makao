@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define STARTING_PLAYER_HAND 4
+#define STARTING_PLAYER_HAND 5
 #define PLAYER_1_NUMBER 1
 #define PLAYER_2_NUMBER 2
 #define DRAW_CARD_CHOICE_NUMBER 99
@@ -75,7 +75,7 @@ public:
         m_activePlayer = PLAYER_1_NUMBER;
 
         Deck deck;
-        // deck.Shuffle();
+        deck.Shuffle();
 
         m_playingDeck = deck;
 
@@ -250,6 +250,18 @@ public:
 
         case Value::Four:
             currentPlayer.skipsRound = true;
+            break;
+
+        case Value::King:
+            if (card.GetColor() == Color::Heart || card.GetColor() == Color::Spade)
+            {
+                gameLogger.DrawXMessage(5);
+                DrawCardX(5, currentPlayer);
+            }
+            else
+            {
+                gameLogger.NoPenaltyMessage();
+            }
             break;
 
         default:
