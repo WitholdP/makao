@@ -75,7 +75,7 @@ public:
         m_activePlayer = PLAYER_1_NUMBER;
 
         Deck deck;
-        deck.Shuffle();
+        // deck.Shuffle();
 
         m_playingDeck = deck;
 
@@ -189,6 +189,19 @@ public:
             Card card = m_playingDeck.Deal();
             currentPlayer.AddCardToHand(card);
         }
+    }
+
+    bool SkipCheck(Player &currentPlayer)
+    {
+        Card &topCard = GetTopTableCard();
+        if (currentPlayer.skipsRound && topCard.IsActive())
+        {
+            gameLogger.SkipRoundMessage();
+            currentPlayer.skipsRound = false;
+            topCard.Deactivate();
+            return true;
+        }
+        return false;
     }
 
     void CardChoice(Player &currentPlayer)

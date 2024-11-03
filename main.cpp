@@ -21,11 +21,8 @@ int main()
 			game.CheckTableCardPenalty(topCard, currentPlayer);
 		}
 
-		if (currentPlayer.skipsRound && topCard.IsActive())
+		if (game.SkipCheck(currentPlayer))
 		{
-			game.gameLogger.SkipRoundMessage();
-			currentPlayer.skipsRound = false;
-			topCard.Deactivate();
 			game.SwitchActivePlayer();
 			continue;
 		}
@@ -34,9 +31,8 @@ int main()
 
 		bool winCheck = currentPlayer.CheckHandEmpty();
 		if (winCheck)
-		{
 			game.SetWinner(currentPlayer.GetPlayerNumber());
-		}
+
 		round++;
 		game.SwitchActivePlayer();
 	}
