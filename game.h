@@ -8,9 +8,10 @@
 
 using namespace std;
 
-#define STARTING_PLAYER_HAND 10
+#define STARTING_PLAYER_HAND 5
 #define PLAYER_1_NUMBER 1
 #define PLAYER_2_NUMBER 2
+#define NUMBER_OF_PLAYERS 2
 #define DRAW_CARD_CHOICE_NUMBER 99
 
 class Player
@@ -75,11 +76,11 @@ public:
         m_activePlayer = PLAYER_1_NUMBER;
 
         Deck deck;
-        // deck.Shuffle();
+        deck.Shuffle();
 
         m_playingDeck = deck;
 
-        for (int i = 0; i < 2 * STARTING_PLAYER_HAND; ++i)
+        for (int i = 0; i < NUMBER_OF_PLAYERS * STARTING_PLAYER_HAND; ++i)
         {
             Card card = m_playingDeck.Deal();
             if (i % 2 == 0)
@@ -140,7 +141,7 @@ public:
         gameLogger.WinnerMessage(m_winner);
     }
 
-    bool ValidateUserInput(string input, int size)
+    bool ValidateUserInput(string input, int size, int beginRange = 0)
     {
         if (!all_of(input.begin(), input.end(), ::isdigit))
         {
@@ -153,7 +154,7 @@ public:
         if (pickedCardIndex == DRAW_CARD_CHOICE_NUMBER)
             return true;
 
-        if (pickedCardIndex < 0 || pickedCardIndex >= size)
+        if (pickedCardIndex < beginRange || pickedCardIndex >= size)
         {
             gameLogger.WrongUserChoiceMessage();
             return false;
@@ -170,10 +171,27 @@ public:
         {
             if (m_aceDemand == pickedCard.GetColor())
             {
+                m_aceDemand = Color::False;
                 return true;
             }
             gameLogger.WrongCardChoiceMessage();
             gameLogger.AceColorChangeReminder(m_aceDemand);
+            return false;
+        }
+
+        if (m_jackDemand != Value::False)
+        {
+            if (m_jackDemand == pickedCard.GetValue())
+            {
+                if (m_jackDemandCounter == 0)
+                {
+                    m_jackDemand = Value::False;
+                }
+                m_jackDemandCounter--;
+                return true;
+            }
+            gameLogger.WrongCardChoiceMessage();
+            gameLogger.JackValueDemandReminder(m_jackDemand);
             return false;
         }
 
@@ -216,9 +234,40 @@ public:
         return false;
     }
 
-    Color CheckAceDemand()
+    void CheckTableCardPenalty(Card card, Player &currentPlayer)
     {
-        return m_aceDemand;
+        switch (card.GetValue())
+        {
+        case Value::Two:
+            gameLogger.DrawXMessage(2);
+            DrawCardX(2, currentPlayer);
+            break;
+
+        case Value::Three:
+            gameLogger.DrawXMessage(3);
+            DrawCardX(3, currentPlayer);
+            break;
+
+        case Value::Four:
+            currentPlayer.skipsRound = true;
+            break;
+
+        case Value::King:
+            if (card.GetColor() == Color::Heart || card.GetColor() == Color::Spade)
+            {
+                gameLogger.DrawXMessage(5);
+                DrawCardX(5, currentPlayer);
+            }
+            else
+            {
+                gameLogger.NoPenaltyMessage();
+            }
+            break;
+
+        default:
+            gameLogger.NoPenaltyMessage();
+            break;
+        }
     }
 
     void AceDemandChoice()
@@ -241,6 +290,30 @@ public:
             m_aceDemand = color;
             validChoice = true;
             gameLogger.AceColorChangeMessage(color);
+        }
+    }
+
+    void JackDemandChoice()
+    {
+        bool validChoice = false;
+
+        while (!validChoice)
+        {
+            gameLogger.PickJackDemandMessage();
+            PrintJackdemandValues();
+
+            string input;
+            cin >> input;
+
+            if (!ValidateUserInput(input, static_cast<int>(Value::Jack), 3))
+                continue;
+
+            int pickedValueIndex = stoi(input);
+            Value value = static_cast<Value>(pickedValueIndex);
+            m_jackDemand = value;
+            m_jackDemandCounter = NUMBER_OF_PLAYERS - 1;
+            validChoice = true;
+            gameLogger.JackValueDemandMessage(value);
         }
     }
 
@@ -283,46 +356,13 @@ public:
             if (pickedCard.IsAce())
                 AceDemandChoice();
 
+            if (pickedCard.IsJack())
+                JackDemandChoice();
+
             currentPlayer.RemoveCard(pickedCardIndex);
             AddCardToTable(pickedCard);
             validCardChoice = true;
             cout << endl;
-        }
-    }
-
-    void CheckTableCardPenalty(Card card, Player &currentPlayer)
-    {
-        switch (card.GetValue())
-        {
-        case Value::Two:
-            gameLogger.DrawXMessage(2);
-            DrawCardX(2, currentPlayer);
-            break;
-
-        case Value::Three:
-            gameLogger.DrawXMessage(3);
-            DrawCardX(3, currentPlayer);
-            break;
-
-        case Value::Four:
-            currentPlayer.skipsRound = true;
-            break;
-
-        case Value::King:
-            if (card.GetColor() == Color::Heart || card.GetColor() == Color::Spade)
-            {
-                gameLogger.DrawXMessage(5);
-                DrawCardX(5, currentPlayer);
-            }
-            else
-            {
-                gameLogger.NoPenaltyMessage();
-            }
-            break;
-
-        default:
-            gameLogger.NoPenaltyMessage();
-            break;
         }
     }
 
@@ -335,6 +375,8 @@ public:
 
 private:
     Color m_aceDemand = Color::False;
+    Value m_jackDemand = Value::False;
+    int m_jackDemandCounter = 0;
     vector<Card> m_table;
 };
 

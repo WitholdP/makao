@@ -49,7 +49,7 @@ void Print(Color color)
     }
 }
 
-enum class Value : uint8_t
+enum class Value : int8_t
 {
     Two = 0,
     Three,
@@ -65,7 +65,8 @@ enum class Value : uint8_t
     King,
     Ace,
 
-    Number
+    Number,
+    False = -1
 };
 
 void Print(Value value)
@@ -116,6 +117,16 @@ void Print(Value value)
     }
 }
 
+void PrintJackdemandValues()
+{
+    cout << "3. Five" << endl;
+    cout << "4. Six" << endl;
+    cout << "5. Seven" << endl;
+    cout << "6. Eight" << endl;
+    cout << "7. Nine" << endl;
+    cout << "8. Ten" << endl;
+}
+
 class Card
 {
 public:
@@ -159,6 +170,11 @@ public:
     bool IsAce()
     {
         return m_value == Value::Ace;
+    }
+
+    bool IsJack()
+    {
+        return m_value == Value::Jack;
     }
 
 private:

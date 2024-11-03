@@ -65,7 +65,7 @@ public:
 
     void PickAceDemandMessage()
     {
-        cout << "which color you would like to demand?" << endl;
+        cout << "Which color you would like to demand?" << endl;
     }
 
     void AceColorChangeMessage(Color color)
@@ -73,6 +73,7 @@ public:
         cout << endl;
         cout << "Color has been changed to: ";
         Print(color);
+        cout << endl;
     }
 
     void AceColorChangeReminder(Color color)
@@ -80,6 +81,27 @@ public:
         cout << endl;
         cout << "Remember that color has been changed to: ";
         Print(color);
+        cout << endl;
+    }
+
+    void PickJackDemandMessage()
+    {
+        cout << "Which value you would like to demand?" << endl;
+    }
+
+    void JackValueDemandMessage(Value value)
+    {
+        cout << endl;
+        cout << "Value has been demanded: ";
+        Print(value);
+        cout << endl;
+    }
+
+    void JackValueDemandReminder(Value value)
+    {
+        cout << endl;
+        cout << "Remember that value has been changed to: ";
+        Print(value);
         cout << endl;
     }
 };
