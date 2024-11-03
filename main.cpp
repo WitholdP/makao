@@ -8,7 +8,6 @@ using namespace std;
 int main()
 {
 	Game game;
-	int round = 0;
 
 	while (game.m_winner == 0)
 	{
@@ -16,7 +15,7 @@ int main()
 		cout << endl;
 		Card &topCard = game.GetTopTableCard();
 
-		if (round != 0)
+		if (game.GetTableSize() != 1)
 		{
 			game.CheckTableCardPenalty(topCard, currentPlayer);
 		}
@@ -33,7 +32,6 @@ int main()
 		if (winCheck)
 			game.SetWinner(currentPlayer.GetPlayerNumber());
 
-		round++;
 		game.SwitchActivePlayer();
 	}
 
