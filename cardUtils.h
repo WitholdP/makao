@@ -6,15 +6,24 @@
 
 using namespace std;
 
-enum class Color : uint8_t
+enum class Color : int8_t
 {
     Heart = 0, // kier
     Diamond,   // karo
     Spade,     // pik
     Club,      // trefl
 
-    Number
+    Number,
+    False = -1
 };
+
+void PrintAllColors()
+{
+    cout << "0. Heart" << endl;
+    cout << "1. Diamond" << endl;
+    cout << "2. Spade" << endl;
+    cout << "3. Club" << endl;
+}
 
 void Print(Color color)
 {
@@ -31,6 +40,9 @@ void Print(Color color)
         break;
     case Color::Club:
         cout << "Club";
+        break;
+    case Color::False:
+        cout << "False";
         break;
     default:
         cout << "none";
@@ -142,6 +154,11 @@ public:
     bool IsActive()
     {
         return active;
+    }
+
+    bool IsAce()
+    {
+        return m_value == Value::Ace;
     }
 
 private:

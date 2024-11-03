@@ -62,6 +62,26 @@ public:
     {
         cout << "You Have to skip this round." << endl;
     }
+
+    void PickAceDemandMessage()
+    {
+        cout << "which color you would like to demand?" << endl;
+    }
+
+    void AceColorChangeMessage(Color color)
+    {
+        cout << endl;
+        cout << "Color has been changed to: ";
+        Print(color);
+    }
+
+    void AceColorChangeReminder(Color color)
+    {
+        cout << endl;
+        cout << "Remember that color has been changed to: ";
+        Print(color);
+        cout << endl;
+    }
 };
 
 #endif

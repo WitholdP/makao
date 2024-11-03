@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define STARTING_PLAYER_HAND 5
+#define STARTING_PLAYER_HAND 10
 #define PLAYER_1_NUMBER 1
 #define PLAYER_2_NUMBER 2
 #define DRAW_CARD_CHOICE_NUMBER 99
@@ -140,7 +140,7 @@ public:
         gameLogger.WinnerMessage(m_winner);
     }
 
-    bool ValidateUserInput(string input, int handSize)
+    bool ValidateUserInput(string input, int size)
     {
         if (!all_of(input.begin(), input.end(), ::isdigit))
         {
@@ -153,7 +153,7 @@ public:
         if (pickedCardIndex == DRAW_CARD_CHOICE_NUMBER)
             return true;
 
-        if (pickedCardIndex < 0 || pickedCardIndex >= handSize)
+        if (pickedCardIndex < 0 || pickedCardIndex >= size)
         {
             gameLogger.WrongUserChoiceMessage();
             return false;
@@ -165,10 +165,22 @@ public:
     bool ValidateCardChoice(Card pickedCard)
     {
         Card topCard = GetTopTableCard();
-        if (topCard.GetColor() == pickedCard.GetColor())
+
+        if (m_aceDemand != Color::False)
+        {
+            if (m_aceDemand == pickedCard.GetColor())
+            {
+                return true;
+            }
+            gameLogger.WrongCardChoiceMessage();
+            gameLogger.AceColorChangeReminder(m_aceDemand);
+            return false;
+        }
+
+        if (topCard.GetColor() == pickedCard.GetColor() || topCard.GetValue() == pickedCard.GetValue())
+        {
             return true;
-        if (topCard.GetValue() == pickedCard.GetValue())
-            return true;
+        }
 
         gameLogger.WrongCardChoiceMessage();
         return false;
@@ -202,6 +214,34 @@ public:
             return true;
         }
         return false;
+    }
+
+    Color CheckAceDemand()
+    {
+        return m_aceDemand;
+    }
+
+    void AceDemandChoice()
+    {
+        bool validChoice = false;
+
+        while (!validChoice)
+        {
+            gameLogger.PickAceDemandMessage();
+            PrintAllColors();
+
+            string input;
+            cin >> input;
+
+            if (!ValidateUserInput(input, static_cast<int>(Color::Number)))
+                continue;
+
+            int pickedColorIndex = stoi(input);
+            Color color = static_cast<Color>(pickedColorIndex);
+            m_aceDemand = color;
+            validChoice = true;
+            gameLogger.AceColorChangeMessage(color);
+        }
     }
 
     void CardChoice(Player &currentPlayer)
@@ -239,6 +279,9 @@ public:
 
             if (!ValidateCardChoice(pickedCard))
                 continue;
+
+            if (pickedCard.IsAce())
+                AceDemandChoice();
 
             currentPlayer.RemoveCard(pickedCardIndex);
             AddCardToTable(pickedCard);
@@ -291,6 +334,7 @@ public:
     Message gameLogger;
 
 private:
+    Color m_aceDemand = Color::False;
     vector<Card> m_table;
 };
 
